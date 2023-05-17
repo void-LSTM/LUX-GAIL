@@ -15,7 +15,7 @@ from model.teacher_network import PolicyNetwork_teacher
 from config import *
 from agent_constants import *
 from model.feature import feature_net
-class EvalEnv():
+class run():
     def __init__(self, args):
         self.args = args
         self.agent0 = self.get_agent()
@@ -27,7 +27,7 @@ class EvalEnv():
                                 num_citytile_actions=CITYTILE_ACTIONS)
         teacher_net=PolicyNetwork_teacher(in_channels=STATE_CHANNELS, feature_size=FEATURE_SIZE, layers=LAYERS,
                                num_unit_actions=UNIT_ACTIONS, num_citytile_actions=CITYTILE_ACTIONS)
-        checkpoint_teacher = torch.load('D:\LuxAI-main\checkpoint.pth')
+        checkpoint_teacher = torch.load('model_p\\teacher_checkpoint.pth')
         teacher_net.load_state_dict(checkpoint_teacher['model'])
         teacher_net.eval()
         state_model = feature_net(in_channels=STATE_CHANNELS, feature_size=FEATURE_SIZE, layers=LAYERS)
@@ -36,7 +36,7 @@ class EvalEnv():
         state_dict = {k:v for k,v in save_model.state_dict().items() if k in model_dict.keys()}
         model_dict.update(state_dict)
         state_model.load_state_dict(model_dict)
-        checkpoint_policy = torch.load('D:\LuxAI-main-ppo\ppo_checkpoint.pth')
+        checkpoint_policy = torch.load('model_p\\ppo_checkpoint.pth')
         policy_net.load_state_dict(checkpoint_policy['model'])
         policy_net.eval()
         agent_ = Agent(policy_net, state_model,device, research_th=0.05, research_turn=15)
@@ -127,7 +127,7 @@ args = parser.parse_args()
         
 if __name__ == '__main__':
     print(args)
-    eval_env = EvalEnv(args)
+    eval_env = run(args)
     eval_env.run()
     print("Done")
 
